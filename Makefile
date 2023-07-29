@@ -13,6 +13,10 @@ dropdb:
 migrateup:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
 
+migrateupdocker:
+	migrate -path db/migration -database "postgresql://root:secret@172.17.0.1:5432/simple_bank?sslmode=disable" -verbose up
+
+
 migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 
