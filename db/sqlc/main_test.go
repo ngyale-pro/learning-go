@@ -7,11 +7,7 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq" // Using the blank identifier, allow to add the postgre driver library without actually using it explicitly
-)
-
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable"
+	"github.com/ngyale-pro/simplebank/util"
 )
 
 var testQueries *Queries
@@ -20,7 +16,12 @@ var testDB *sql.DB
 func TestMain(m *testing.M) {
 	var err error
 
-	testDB, err = sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../../.")
+	if err != nil {
+		log.Fatal("Can't load configuration.", err)
+	}
+
+	testDB, err = sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("Can't connect to DB")
 	}

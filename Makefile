@@ -13,17 +13,30 @@ dropdb:
 migrateup:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up
 
+migrateup1:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose up 1
+
 migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
+
+migratedown1:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down 1
+
 
 destroy:
 	docker stop postgres15 
 	docker rm postgres15
 
 sqlc:
-	sqlc generate
+	sqlc generate 
 
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown destroy sqlc
+server:
+	go run main.go
+
+mock:
+	mockgen -package mockdb -destination ./db/mock/store.go github.com/ngyale-pro/simplebank/db/sqlc Store 
+
+.PHONY: postgres createdb dropdb migrateup migratedown destroy sqlc test server mock migrateup1 migratedown1
