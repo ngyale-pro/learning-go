@@ -41,15 +41,15 @@ func (server *Server) setupRouter() {
 	router := gin.Default()
 
 	router.POST("/login", server.loginUser)
-
 	router.POST("/users", server.createUser)
 
 	// Can give multiple functions as parameters, only the last one will be considered as the handler, the previous will act as middleware functions
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
+	authRoutes := router.Group("/").Use(authMiddleware((server.tokenMaker)))
 
-	router.POST("/transfers", server.createTransfer)
+	authRoutes.POST("/accounts", server.createAccount)
+	authRoutes.GET("/accounts/:id", server.getAccount)
+	authRoutes.GET("/accounts", server.listAccount)
+	authRoutes.POST("/transfers", server.createTransfer)
 	server.router = router
 }
 

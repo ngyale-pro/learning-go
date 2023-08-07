@@ -10,7 +10,7 @@ import (
 // This structure is a composition which extends the capacity of the structure Query (similar to inheritence)
 type Store interface {
 	Querier
-	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResults, error)
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
 }
 
 type SQLStore struct {
@@ -24,7 +24,7 @@ type TransferTxParams struct {
 	Amount        int64 `json:"amount"`
 }
 
-type TransferTxResults struct {
+type TransferTxResult struct {
 	Transfer    Transfer `json:"transfer"`
 	FromAccount Account  `json:"from_account"`
 	ToAccount   Account  `json:"to_account"`
@@ -62,8 +62,8 @@ func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) erro
 
 // TransferTx performs a money transfer from one account to the other.
 // It creates a transfer record, add account entries, and update account's balance within a single database
-func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResults, error) {
-	var result TransferTxResults
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+	var result TransferTxResult
 
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error

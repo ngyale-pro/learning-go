@@ -27,7 +27,7 @@ func TestTransferTransaction(t *testing.T) {
 	n := 5
 
 	err_channel := make(chan error)
-	result_channel := make(chan TransferTxResults)
+	result_channel := make(chan TransferTxResult)
 
 	for i := 0; i < n; i++ {
 		// transactionName := fmt.Sprintf("Transaction: %d", i)
