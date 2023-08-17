@@ -17,6 +17,10 @@ jobs:
       contents: read
 
     steps:
+		# This retrieve the last commit (files) and authenticates for any future git commands, it's usually mandatory
+      - name: Check out code 
+        uses: actions/checkout@v3
+        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
