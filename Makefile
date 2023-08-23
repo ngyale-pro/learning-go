@@ -37,6 +37,12 @@ server:
 	go run main.go
 
 mock:
-	mockgen -package mockdb -destination ./db/mock/store.go github.com/ngyale-pro/simplebank/db/sqlc Store 
+	mockgen -package mockdb -destination ./db/mock/store.go github.com/ngyale-pro/simplebank/db/sqlc Store
 
-.PHONY: postgres createdb dropdb migrateup migratedown destroy sqlc test server mock migrateup1 migratedown1
+kubedeploy:
+	kubectl apply -f eks/deployment.yaml
+	kubectl apply -f eks/service.yaml
+	kubectl apply -f eks/ingress.yaml
+	kubectl apply -f eks/issuer.yaml
+
+.PHONY: postgres createdb dropdb migrateup migratedown destroy sqlc test server mock migrateup1 migratedown1 kubedeploy

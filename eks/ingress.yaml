@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-bank-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - acbde367d20b749be8fe21e2eed87e01-f8ce1da62e686491.elb.eu-west-1.amazonaws.com
+    secretName: simple-bank-api-cert
+  rules:
+  - host: "*.elb.eu-west-1.amazonaws.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: simple-bank-api-service
+            port:
+              number: 80
