@@ -42,8 +42,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
-      - name: Load secret and save to app.env
-        run: aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:eu-west-1:814575821063:secret:sandbox/simple_bank-Y2eWwi --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
+      # - name: Load secret and save to app.env
+      #   run: aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:eu-west-1:814575821063:secret:sandbox/simple_bank-Y2eWwi --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
      
       - name: Build, tag, and push docker image to Amazon ECR
         env:
