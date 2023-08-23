@@ -52,10 +52,10 @@ jobs:
           IMAGE_TAG: ${{ github.sha }} # Associate the commit ID to the image as a tag
         run: | # push -a pushed all image tag
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t latest .
-          docker push --all-tags $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push --all-tags $REGISTRY/$REPOSITORY
       - name: Deploy image to Amazon EKS
         run: |
-          ubectl apply -f eks/deployment.yaml
+          kubectl apply -f eks/deployment.yaml
           kubectl apply -f eks/service.yaml
           kubectl apply -f eks/ingress.yaml
           kubectl apply -f eks/issuer.yaml
