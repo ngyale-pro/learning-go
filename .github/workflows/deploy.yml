@@ -51,8 +51,8 @@ jobs:
           REPOSITORY: simplebank
           IMAGE_TAG: ${{ github.sha }} # Associate the commit ID to the image as a tag
         run: | # push -a pushed all image tag
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:$IMAGE_TAG:latest .
-          docker push --all-tags $REGISTRY/$REPOSITORY
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest .
+          docker push -a $REGISTRY/$REPOSITORY
 
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --region eu-west-1 --name simplebank-rAfHKGtH
