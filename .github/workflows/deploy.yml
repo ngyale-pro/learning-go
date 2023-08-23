@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  deploy:
     name:  Build image
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
@@ -19,6 +19,12 @@ jobs:
     steps:
       - name: Check out code 
         uses: actions/checkout@v3
+
+      - name: Install kubectl 
+        uses: azure/setup-kubectl@v3
+        with:
+          version: default # default is latest stable
+        id: install
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -36,14 +42,21 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         with:
           mask-password: 'true'
-      - name: Load secret and save to app.env
-        run: aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:eu-west-1:814575821063:secret:sandbox/simple_bank-Y2eWwi --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
+      # - name: Load secret and save to app.env
+      #   run: aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:eu-west-1:814575821063:secret:sandbox/simple_bank-Y2eWwi --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
      
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: simplebank
           IMAGE_TAG: ${{ github.sha }} # Associate the commit ID to the image as a tag
+        run: | # push -a pushed all image tag             
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t latest .
+          docker push -a $REGISTRY/$REPOSITORY:$IMAGE_TAG 
+
+      - name: Deploy image to Amazon EKS
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          	kubectl apply -f eks/deployment.yaml
+	          kubectl apply -f eks/service.yaml
+	          kubectl apply -f eks/ingress.yaml
+	          kubectl apply -f eks/issuer.yaml
