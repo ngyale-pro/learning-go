@@ -45,4 +45,11 @@ kubedeploy:
 	kubectl apply -f eks/ingress.yaml
 	kubectl apply -f eks/issuer.yaml
 
-.PHONY: postgres createdb dropdb migrateup migratedown destroy sqlc test server mock migrateup1 migratedown1 kubedeploy
+kubedelete:
+	kubectl delete clusterissuer letsencrypt-staging
+	kubectl delete ingressclass nginx 
+	kubectl delete ingress simple-bank-ingress 
+	kubectl delete service simple-bank-api-service 
+	kubectl delete deployment simple-bank-api-deployment 
+
+.PHONY: postgres createdb dropdb migrateup migratedown destroy sqlc test server mock migrateup1 migratedown1 kubedeploy kubedelete
