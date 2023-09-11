@@ -9,6 +9,15 @@ import (
 	"github.com/lib/pq"
 	db "github.com/ngyale-pro/simplebank/db/sqlc"
 	"github.com/ngyale-pro/simplebank/util"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
+
+var userLoginCounter = prometheus.NewCounter(
+	prometheus.CounterOpts{
+		Name: "login_request_count",
+		Help: "No of request handled by login handler",
+	},
 )
 
 type createUserRequest struct {
@@ -106,7 +115,13 @@ type loginUserResponse struct {
 	User        userResponse `json:"user"`
 }
 
+func InitPrometheus(router *gin.Engine) {
+	prometheus.MustRegister(userLoginCounter)
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+}
+
 func (server *Server) loginUser(ctx *gin.Context) {
+	userLoginCounter.Inc()
 	var req loginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))

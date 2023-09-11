@@ -39,7 +39,7 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
-
+	InitPrometheus(router)
 	router.POST("/login", server.loginUser)
 	router.POST("/users", server.createUser)
 

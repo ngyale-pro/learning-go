@@ -33,5 +33,4 @@ func main() {
 	if err != nil {
 		log.Fatal("can't start server.", err)
 	}
-
 }
