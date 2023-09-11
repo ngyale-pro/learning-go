@@ -115,8 +115,13 @@ type loginUserResponse struct {
 	User        userResponse `json:"user"`
 }
 
+var prometheusIsInitialized = false
+
 func InitPrometheus(router *gin.Engine) {
-	prometheus.MustRegister(userLoginCounter)
+	if !prometheusIsInitialized {
+		prometheus.MustRegister(userLoginCounter)
+		prometheusIsInitialized = true
+	}
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 }
 
