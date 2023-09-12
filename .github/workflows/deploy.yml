@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 jobs:
   deploy:
-    name: Build image
+    name: Build image and deploy
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
